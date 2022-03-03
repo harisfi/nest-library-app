@@ -23,12 +23,24 @@ export class BooksController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
-    return this.booksService.update(+id, updateBookDto);
+  async update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
+    const updated = await this.booksService.update(+id, updateBookDto);
+    if (updated) {
+      return {
+        statusCode: 200,
+        message: 'Updated'
+      };
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.booksService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const deleted = await this.booksService.remove(+id);
+    if (deleted) {
+      return {
+        statusCode: 200,
+        message: 'Deleted'
+      };
+    }
   }
 }
