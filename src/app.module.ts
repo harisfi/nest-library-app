@@ -8,12 +8,6 @@ import { BooksModule } from './books/books.module';
 @Module({
   imports: [
     BooksModule,
-    RouterModule.register([
-      {
-        path: 'v1',
-        module: BooksModule,
-      },
-    ]),
     TypeOrmModule.forRoot()
   ],
   controllers: [AppController],
