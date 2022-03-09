@@ -1,4 +1,5 @@
 import { registerAs } from "@nestjs/config";
+import { BookLoan } from "src/book-loans/entities/book-loan.entity";
 import { Book } from "src/books/entities/book.entity";
 
 export default registerAs('database', () => ({
@@ -9,5 +10,5 @@ export default registerAs('database', () => ({
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
   synchronize: false,
-  entities: [Book]
+  entities: [Book, BookLoan]
 }))

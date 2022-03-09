@@ -1,3 +1,4 @@
+import { BookLoan } from "src/book-loans/entities/book-loan.entity";
 import { Book } from "src/books/entities/book.entity";
 import databaseConfig from "src/common/config/database.config";
 
@@ -9,7 +10,7 @@ module.exports = {
   password: databaseConfig().password,
   database: databaseConfig().database,
   synchronize: false,
-  entities: [Book],
+  entities: [Book, BookLoan],
   migrations: ['src/databases/migrations/*.ts'],
   cli: {
     migrationsDir: 'src/databases/migrations'
