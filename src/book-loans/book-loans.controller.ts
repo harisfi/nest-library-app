@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, BadRequestException } from '@nestjs/common';
 import { BookLoansService } from './book-loans.service';
 import { CreateBookLoanDto } from './dto/create-book-loan.dto';
 import { UpdateBookLoanDto } from './dto/update-book-loan.dto';
@@ -10,11 +10,11 @@ import { UpdateBookLoanDto } from './dto/update-book-loan.dto';
 export class BookLoansController {
   constructor(private readonly bookLoansService: BookLoansService) {}
 
-  @Post()
-  create(@Body() createBookLoanDto: CreateBookLoanDto) {
-    createBookLoanDto.isStillBorrowed = true;
-    return this.bookLoansService.create(createBookLoanDto);
-  }
+  // @Post()
+  // create(@Body() createBookLoanDto: CreateBookLoanDto) {
+  //   createBookLoanDto.isStillBorrowed = true;
+  //   return this.bookLoansService.create(createBookLoanDto);
+  // }
 
   @Get()
   findAll() {
@@ -44,6 +44,19 @@ export class BookLoansController {
       return {
         statusCode: 200,
         message: 'Deleted'
+      };
+    }
+  }
+
+  @Post('loan')
+  async loan(@Body() createBookLoanDto: CreateBookLoanDto) {
+    try {
+      const loan = await this.bookLoansService.loan(createBookLoanDto);
+      return loan;
+    } catch (error) {
+      return {
+        statusCode: 201,
+        message: 'Loaned'
       };
     }
   }

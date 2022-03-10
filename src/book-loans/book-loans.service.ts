@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Book } from 'src/books/entities/book.entity';
+import { Connection, Repository } from 'typeorm';
 import { CreateBookLoanDto } from './dto/create-book-loan.dto';
 import { UpdateBookLoanDto } from './dto/update-book-loan.dto';
 import { BookLoan } from './entities/book-loan.entity';
@@ -9,13 +10,14 @@ import { BookLoan } from './entities/book-loan.entity';
 export class BookLoansService {
   constructor(
     @InjectRepository(BookLoan)
-    private bookLoanRepository: Repository<BookLoan>
+    private bookLoanRepository: Repository<BookLoan>,
+    private connection: Connection,
   ) {}
 
-  create(createBookLoanDto: CreateBookLoanDto) {
-    const bookLoan = this.bookLoanRepository.create(createBookLoanDto);
-    return this.bookLoanRepository.save(bookLoan);
-  }
+  // create(createBookLoanDto: CreateBookLoanDto) {
+  //   const bookLoan = this.bookLoanRepository.create(createBookLoanDto);
+  //   return this.bookLoanRepository.save(bookLoan);
+  // }
 
   findAll(): Promise<BookLoan[]> {
     return this.bookLoanRepository.createQueryBuilder('book_loan')
@@ -57,5 +59,50 @@ export class BookLoansService {
     }
 
     return true;
+  }
+
+  async loan(createBookLoanDto: CreateBookLoanDto) {
+    const queryRunner = this.connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const books = await queryRunner.manager.count(Book, {
+        where: {
+          id: createBookLoanDto.book,
+        },
+      });
+
+      if (books <= 0) {
+        throw new NotFoundException('Book is not found');
+      }
+
+      const loans = await queryRunner.manager.count(BookLoan, {
+        where: {
+          book: {
+            id: createBookLoanDto.book,
+          },
+          isStillBorrowed: true,
+        },
+      });
+
+      if (loans >= 1) {
+        throw new BadRequestException('Book already borrowed');
+      }
+
+      createBookLoanDto.isStillBorrowed = true;
+      const bookLoan = queryRunner.manager.create(BookLoan, createBookLoanDto);
+      const ret = queryRunner.manager.save(bookLoan);
+
+      await queryRunner.commitTransaction();
+
+      return ret;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      return error.response;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
