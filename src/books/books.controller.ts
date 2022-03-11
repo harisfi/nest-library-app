@@ -1,4 +1,6 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseFilters, ParseIntPipe } from '@nestjs/common';
+import { ValidationPipe } from 'src/common/pipes/validation.pipe';
+// import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
@@ -12,7 +14,8 @@ export class BooksController {
 
   @Post()
   create(@Body() createBookDto: CreateBookDto) {
-    return this.booksService.create(createBookDto);
+  // create(@Body(new ValidationPipe()) createBookDto: CreateBookDto) {
+      return this.booksService.create(createBookDto);
   }
 
   @Get()
@@ -21,8 +24,9 @@ export class BooksController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.booksService.findOne(+id);
+  // @UseFilters(HttpExceptionFilter)
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.booksService.findOne(id);
   }
 
   @Put(':id')

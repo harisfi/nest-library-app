@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -24,7 +24,14 @@ export class BooksService {
   async findOne(id: number): Promise<Book> {
     const book = await this.bookRepository.findOne(id);
     if (!book) {
-      throw new NotFoundException();
+      throw new NotFoundException('book not found');
+      // throw new HttpException(
+      //   {
+      //     status: HttpStatus.FORBIDDEN,
+      //     error: 'Forbidden'
+      //   },
+      //   HttpStatus.FORBIDDEN
+      // );
     }
 
     return book;
@@ -37,7 +44,7 @@ export class BooksService {
 
     const book = await this.bookRepository.update(id, updateBookDto);
     if (!book.affected) {
-      throw new NotFoundException();
+      throw new NotFoundException('book not found');
     }
 
     return true;
@@ -46,7 +53,7 @@ export class BooksService {
   async remove(id: number): Promise<boolean> {
     const book = await this.bookRepository.delete(id);
     if (!book.affected) {
-      throw new NotFoundException();
+      throw new NotFoundException('book not found');
     }
 
     return true;
