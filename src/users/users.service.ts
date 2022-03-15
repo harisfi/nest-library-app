@@ -33,6 +33,6 @@ export class UsersService {
   }
 
   async findByUsername(username: string): Promise<User> {
-    return this.userRepository.findOne({ where: username });
+    return this.userRepository.findOne({ where: { username } });
   }
 }
