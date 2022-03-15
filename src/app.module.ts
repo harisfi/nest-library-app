@@ -13,6 +13,7 @@ import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor'
       inject: [ConfigService]
     }),
     BooksModule,
-    BookLoansModule
+    BookLoansModule,
+    UsersModule
   ],
   controllers: [AppController],
   providers: [

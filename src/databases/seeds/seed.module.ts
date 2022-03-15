@@ -3,7 +3,8 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Book } from "src/books/entities/book.entity";
 import databaseConfig from "src/common/config/database.config";
-import { BookSeedService } from "./book.seed.service";
+import { BookSeeder } from "./providers/book.seeder";
+import { UserSeeder } from "./providers/user.seeder";
 
 @Module({
   imports: [
@@ -21,6 +22,9 @@ import { BookSeedService } from "./book.seed.service";
     }),
     TypeOrmModule.forFeature([Book])
   ],
-  providers: [BookSeedService]
+  providers: [
+    BookSeeder,
+    UserSeeder
+  ]
 })
 export class SeedModule {}
