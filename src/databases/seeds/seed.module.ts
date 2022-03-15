@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Book } from "src/books/entities/book.entity";
 import databaseConfig from "src/common/config/database.config";
+import { User } from "src/users/entities/user.entity";
 import { BookSeeder } from "./providers/book.seeder";
 import { UserSeeder } from "./providers/user.seeder";
 
@@ -20,7 +21,7 @@ import { UserSeeder } from "./providers/user.seeder";
       },
       inject: [ConfigService]
     }),
-    TypeOrmModule.forFeature([Book])
+    TypeOrmModule.forFeature([Book, User])
   ],
   providers: [
     BookSeeder,
